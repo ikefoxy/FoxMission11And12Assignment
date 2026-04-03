@@ -1,49 +1,42 @@
 # FoxMission11And12Assignment
 
-Combined Mission #11 + Mission #12 bookstore app using ASP.NET Core API + React + SQLite.
+Bookstore app built with ASP.NET Core Web API + React + SQLite.
 
-## What is included
+## Run (TA)
 
-- Book list with pagination, page size, and title sorting
-- Category filtering (`All Categories` + DB categories)
-- Pagination updates to match the selected category
-- Shopping cart with add/update/remove
-- Cart quantity, item subtotal, and cart total
-- Cart saved in `sessionStorage` for the active browser session
-- "Continue Shopping" button that returns to the same list page/filter state
-- Cart summary shown on the main book list page
-- Bootstrap grid layout (`row`, `col-lg-8`, `col-lg-4`)
-- Extra Bootstrap feature: `sticky-top` for the cart summary card
-- Extra Bootstrap feature: `progress` / `progress-bar` for cart fullness
-
-## TA Bootstrap note
-
-Two Bootstrap features added beyond basic table/buttons:
-
-1. `sticky-top` on the cart summary card to keep it visible while scrolling
-2. `progress` / `progress-bar` in the cart summary to show cart fullness visually
-
-## Simple run steps
-
-From the repo root:
+From repo root:
 
 ```bash
 npm run start:all
 ```
 
-Then open:
+Open:
 
 `http://localhost:5039`
 
-This URL serves both backend API and frontend build from the same localhost origin.
+You should see a book list with category filter, paging, sorting, and cart actions.
 
-To stop:
+## Quick API Check
+
+```bash
+curl -s "http://localhost:5039/api/categories"
+```
+
+```bash
+curl -s "http://localhost:5039/api/books?pageSize=5&pageNum=1&sortOrder=asc&category=all"
+```
+
+Both commands should return JSON with data.
+
+## Stop
 
 ```bash
 kill $(lsof -ti :5039) 2>/dev/null || true
 ```
 
-## API
+## Backend Structure
 
-- `GET /api/categories`
-- `GET /api/books?pageSize=5&pageNum=1&sortOrder=asc|desc&category=all|<categoryName>`
+- `backend/Controllers/BooksController.cs`
+- `backend/Data/SqliteBookRepository.cs`
+- `backend/Models/Book.cs`
+- `backend/Models/PagedBooksResponse.cs`
