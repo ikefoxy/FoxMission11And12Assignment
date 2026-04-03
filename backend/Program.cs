@@ -9,11 +9,16 @@ builder.Services.AddScoped<IBookRepository, SqliteBookRepository>();
 var app = builder.Build();
 
 // React production build output that ASP.NET will serve as static files.
-var frontendDistPath = Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "frontend", "dist"));
+var frontendDistCandidates = new[]
+{
+    Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "..", "frontend", "dist")),
+    Path.GetFullPath(Path.Combine(app.Environment.ContentRootPath, "wwwroot"))
+};
+var frontendDistPath = frontendDistCandidates.FirstOrDefault(Directory.Exists);
 
 app.MapControllers();
 
-if (Directory.Exists(frontendDistPath))
+if (!string.IsNullOrWhiteSpace(frontendDistPath) && Directory.Exists(frontendDistPath))
 {
     var frontendFileProvider = new PhysicalFileProvider(frontendDistPath);
 

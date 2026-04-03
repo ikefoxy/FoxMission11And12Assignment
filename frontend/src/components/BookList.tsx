@@ -1,16 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-
-type Book = {
-  bookID: number
-  title: string
-  author: string
-  publisher: string
-  isbn: string
-  classification: string
-  category: string
-  pageCount: number
-  price: number
-}
+import type { Book } from '../types/book'
 
 type CartItem = Book & {
   quantity: number

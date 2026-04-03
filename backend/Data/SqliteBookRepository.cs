@@ -115,6 +115,113 @@ public sealed class SqliteBookRepository(IConfiguration configuration, IWebHostE
         };
     }
 
+    public Book? GetBookById(int id)
+    {
+        EnsureDatabaseExists();
+
+        using var connection = new SqliteConnection($"Data Source={_databasePath}");
+        connection.Open();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            SELECT BookID, Title, Author, Publisher, ISBN, Classification, Category, PageCount, Price
+            FROM Books
+            WHERE BookID = @bookId
+            """;
+        command.Parameters.AddWithValue("@bookId", id);
+
+        using var reader = command.ExecuteReader();
+        if (!reader.Read())
+        {
+            return null;
+        }
+
+        return new Book
+        {
+            BookID = reader.GetInt32(0),
+            Title = reader.GetString(1),
+            Author = reader.GetString(2),
+            Publisher = reader.GetString(3),
+            ISBN = reader.GetString(4),
+            Classification = reader.GetString(5),
+            Category = reader.GetString(6),
+            PageCount = reader.GetInt32(7),
+            Price = reader.GetDouble(8)
+        };
+    }
+
+    public Book AddBook(BookInput bookInput)
+    {
+        EnsureDatabaseExists();
+
+        using var connection = new SqliteConnection($"Data Source={_databasePath}");
+        connection.Open();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            INSERT INTO Books (Title, Author, Publisher, ISBN, Classification, Category, PageCount, Price)
+            VALUES (@title, @author, @publisher, @isbn, @classification, @category, @pageCount, @price);
+            SELECT last_insert_rowid();
+            """;
+        AddBookParameters(command, bookInput);
+
+        var newId = Convert.ToInt32(command.ExecuteScalar());
+        return GetBookById(newId) ?? throw new InvalidOperationException("Book insert succeeded but readback failed.");
+    }
+
+    public bool UpdateBook(int id, BookInput bookInput)
+    {
+        EnsureDatabaseExists();
+
+        using var connection = new SqliteConnection($"Data Source={_databasePath}");
+        connection.Open();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            UPDATE Books
+            SET
+                Title = @title,
+                Author = @author,
+                Publisher = @publisher,
+                ISBN = @isbn,
+                Classification = @classification,
+                Category = @category,
+                PageCount = @pageCount,
+                Price = @price
+            WHERE BookID = @bookId
+            """;
+        command.Parameters.AddWithValue("@bookId", id);
+        AddBookParameters(command, bookInput);
+
+        return command.ExecuteNonQuery() > 0;
+    }
+
+    public bool DeleteBook(int id)
+    {
+        EnsureDatabaseExists();
+
+        using var connection = new SqliteConnection($"Data Source={_databasePath}");
+        connection.Open();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM Books WHERE BookID = @bookId";
+        command.Parameters.AddWithValue("@bookId", id);
+
+        return command.ExecuteNonQuery() > 0;
+    }
+
+    private static void AddBookParameters(SqliteCommand command, BookInput bookInput)
+    {
+        command.Parameters.AddWithValue("@title", bookInput.Title.Trim());
+        command.Parameters.AddWithValue("@author", bookInput.Author.Trim());
+        command.Parameters.AddWithValue("@publisher", bookInput.Publisher.Trim());
+        command.Parameters.AddWithValue("@isbn", bookInput.ISBN.Trim());
+        command.Parameters.AddWithValue("@classification", bookInput.Classification.Trim());
+        command.Parameters.AddWithValue("@category", bookInput.Category.Trim());
+        command.Parameters.AddWithValue("@pageCount", bookInput.PageCount);
+        command.Parameters.AddWithValue("@price", bookInput.Price);
+    }
+
     private void EnsureDatabaseExists()
     {
         if (!File.Exists(_databasePath))
