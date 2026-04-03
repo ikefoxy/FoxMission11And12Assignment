@@ -2,22 +2,25 @@
 
 Bookstore app built with ASP.NET Core Web API + React + SQLite.
 
-## Mission 13 Features Added
+## Mission 13 Status
 
-- Admin page at `/adminbooks`
-- Add books to database
-- Update books in database
-- Delete books from database
-- SPA route support file: `frontend/public/routes.json`
+- Phase branch created: `phase6`
+- Admin page route added: `/adminbooks`
+- Book CRUD implemented:
+  - Add books
+  - Update books
+  - Delete books
+- SPA deep-link file added: `frontend/public/routes.json`
+- App deployed to Azure
 
-## Deployed Azure Site
+## Azure Links
 
-- Live URL: `http://foxmission13-ikefox-21573.azurewebsites.net`
-- Admin page: `http://foxmission13-ikefox-21573.azurewebsites.net/adminbooks`
+- Live site: `https://foxmission13-ikefox-21573.azurewebsites.net`
+- Admin page: `https://foxmission13-ikefox-21573.azurewebsites.net/adminbooks`
 
-## Run (TA)
+## Local Run Steps (TA)
 
-From repo root:
+From the repo root:
 
 ```bash
 npm run start:all
@@ -28,7 +31,7 @@ Open:
 - Catalog: `http://localhost:5039/`
 - Admin page: `http://localhost:5039/adminbooks`
 
-## Quick API Check
+## API Checks (TA)
 
 ```bash
 curl -s "http://localhost:5039/api/categories"
@@ -48,7 +51,7 @@ CRUD endpoints:
 - `PUT /api/books/{id}`
 - `DELETE /api/books/{id}`
 
-## Stop
+## Stop Local App
 
 ```bash
 kill $(lsof -ti :5039) 2>/dev/null || true
@@ -57,6 +60,7 @@ kill $(lsof -ti :5039) 2>/dev/null || true
 ## Backend Structure
 
 - `backend/Controllers/BooksController.cs`
+- `backend/Data/IBookRepository.cs`
 - `backend/Data/SqliteBookRepository.cs`
 - `backend/Models/Book.cs`
 - `backend/Models/BookInput.cs`
