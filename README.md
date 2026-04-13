@@ -2,66 +2,67 @@
 
 Bookstore app built with ASP.NET Core Web API + React + SQLite.
 
-## Mission 13 Status
+## What This Includes
 
-- Phase branch created: `phase6`
-- Admin page route added: `/adminbooks`
-- Book CRUD implemented:
-  - Add books
-  - Update books
-  - Delete books
-- SPA deep-link file added: `frontend/public/routes.json`
-- App deployed to Azure
+- Book catalog page
+- Admin page at `/adminbooks`
+- Book CRUD API (`POST`, `PUT`, `DELETE`)
+- SQLite database (`Bookstore.sqlite`)
 
-## Azure Links
+## Live Deployment
 
-- Live site: `https://foxmission13-ikefox-21573.azurewebsites.net`
-- Admin page: `https://foxmission13-ikefox-21573.azurewebsites.net/adminbooks`
+- Site: `https://foxmission13-ikefox-21573.azurewebsites.net`
+- Admin: `https://foxmission13-ikefox-21573.azurewebsites.net/adminbooks`
 
-## Local Run Steps (TA)
+## Localhost Quick Start
 
-From the repo root:
+1. Install required tools:
+   - .NET 10 SDK
+   - Node.js 20+ (includes npm)
+
+macOS (Homebrew):
+
+```bash
+brew update
+brew install --cask dotnet-sdk
+brew install node@22
+```
+
+Windows (PowerShell as Admin):
+
+```powershell
+winget install Microsoft.DotNet.SDK.10
+winget install OpenJS.NodeJS.LTS
+```
+
+2. Verify installs:
+
+```bash
+dotnet --version
+node --version
+npm --version
+```
+
+3. Open a terminal in the project folder:
+
+```bash
+cd FoxMission11And12Assignment
+```
+
+4. From the repo root, run:
 
 ```bash
 npm run start:all
 ```
 
-Open:
+5. Open:
+   - `http://localhost:5039/`
+   - `http://localhost:5039/adminbooks`
 
-- Catalog: `http://localhost:5039/`
-- Admin page: `http://localhost:5039/adminbooks`
-
-## API Checks (TA)
-
-```bash
-curl -s "http://localhost:5039/api/categories"
-```
+6. Confirm API is running:
 
 ```bash
-curl -s "http://localhost:5039/api/books?pageSize=5&pageNum=1&sortOrder=asc&category=all"
+curl http://localhost:5039/api/categories
 ```
 
-```bash
-curl -i -X POST "http://localhost:5039/api/books" -H "Content-Type: application/json" -d '{"title":"TA Test","author":"Tester","publisher":"BYU","isbn":"978-0000000000","classification":"Fiction","category":"Testing","pageCount":123,"price":9.99}'
-```
-
-CRUD endpoints:
-
-- `POST /api/books`
-- `PUT /api/books/{id}`
-- `DELETE /api/books/{id}`
-
-## Stop Local App
-
-```bash
-kill $(lsof -ti :5039) 2>/dev/null || true
-```
-
-## Backend Structure
-
-- `backend/Controllers/BooksController.cs`
-- `backend/Data/IBookRepository.cs`
-- `backend/Data/SqliteBookRepository.cs`
-- `backend/Models/Book.cs`
-- `backend/Models/BookInput.cs`
-- `backend/Models/PagedBooksResponse.cs`
+7. Stop the app with `Ctrl + C`.

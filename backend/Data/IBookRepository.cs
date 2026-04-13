@@ -2,6 +2,7 @@ using backend.Models;
 
 namespace backend.Data;
 
+// Contract used by controllers so data access can be swapped without changing API logic.
 public interface IBookRepository
 {
     IReadOnlyList<string> GetCategories();

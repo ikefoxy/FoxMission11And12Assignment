@@ -5,6 +5,7 @@ import BookList from './components/BookList'
 
 function App() {
   return (
+    // Two-page SPA: catalog at "/" and admin CRUD UI at "/adminbooks".
     <Routes>
       <Route
         path="/"

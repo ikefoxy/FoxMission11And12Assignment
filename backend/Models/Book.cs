@@ -1,5 +1,6 @@
 namespace backend.Models;
 
+// Full book record returned from the API and loaded from SQLite.
 public sealed class Book
 {
     public int BookID { get; set; }

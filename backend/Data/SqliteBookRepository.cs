@@ -3,6 +3,7 @@ using Microsoft.Data.Sqlite;
 
 namespace backend.Data;
 
+// SQLite-backed implementation of the bookstore data operations.
 public sealed class SqliteBookRepository(IConfiguration configuration, IWebHostEnvironment environment) : IBookRepository
 {
     private readonly string _databasePath = ResolveDatabasePath(configuration, environment);
@@ -36,6 +37,7 @@ public sealed class SqliteBookRepository(IConfiguration configuration, IWebHostE
     {
         EnsureDatabaseExists();
 
+        // Normalize query inputs so API always behaves predictably.
         var safePageSize = Math.Clamp(pageSize ?? 5, 1, 100);
         var safePageNum = Math.Max(pageNum ?? 1, 1);
         var normalizedSortOrder = string.Equals(sortOrder, "desc", StringComparison.OrdinalIgnoreCase) ? "DESC" : "ASC";
@@ -51,6 +53,7 @@ public sealed class SqliteBookRepository(IConfiguration configuration, IWebHostE
 
         using (var countCommand = connection.CreateCommand())
         {
+            // Count first so UI can render accurate pagination controls.
             countCommand.CommandText = normalizedCategory is null
                 ? "SELECT COUNT(*) FROM Books"
                 : "SELECT COUNT(*) FROM Books WHERE Category = @category";
@@ -67,6 +70,7 @@ public sealed class SqliteBookRepository(IConfiguration configuration, IWebHostE
 
         using (var command = connection.CreateCommand())
         {
+            // Query only one page of books, with optional category filter.
             command.CommandText = $"""
                 SELECT BookID, Title, Author, Publisher, ISBN, Classification, Category, PageCount, Price
                 FROM Books
@@ -158,6 +162,7 @@ public sealed class SqliteBookRepository(IConfiguration configuration, IWebHostE
         connection.Open();
 
         using var command = connection.CreateCommand();
+        // Insert then read back the row so caller gets the saved record (including generated ID).
         command.CommandText = """
             INSERT INTO Books (Title, Author, Publisher, ISBN, Classification, Category, PageCount, Price)
             VALUES (@title, @author, @publisher, @isbn, @classification, @category, @pageCount, @price);
@@ -212,6 +217,7 @@ public sealed class SqliteBookRepository(IConfiguration configuration, IWebHostE
 
     private static void AddBookParameters(SqliteCommand command, BookInput bookInput)
     {
+        // Trim string inputs to avoid storing accidental leading/trailing spaces.
         command.Parameters.AddWithValue("@title", bookInput.Title.Trim());
         command.Parameters.AddWithValue("@author", bookInput.Author.Trim());
         command.Parameters.AddWithValue("@publisher", bookInput.Publisher.Trim());
@@ -224,6 +230,7 @@ public sealed class SqliteBookRepository(IConfiguration configuration, IWebHostE
 
     private void EnsureDatabaseExists()
     {
+        // Fail fast with a clear error if the expected SQLite file is missing.
         if (!File.Exists(_databasePath))
         {
             throw new FileNotFoundException($"Database file not found at {_databasePath}");
@@ -232,6 +239,7 @@ public sealed class SqliteBookRepository(IConfiguration configuration, IWebHostE
 
     private static string ResolveDatabasePath(IConfiguration configuration, IWebHostEnvironment environment)
     {
+        // Prefer configured path, then common local defaults used by this repo.
         var configuredPath = configuration["BookstoreDatabasePath"];
         var candidatePaths = new List<string>();
 

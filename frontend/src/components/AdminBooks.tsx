@@ -7,8 +7,10 @@ type BooksResponse = {
   totalBooks: number
 }
 
+// Use same-origin by default so backend can serve frontend and API together.
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? ''
 
+// Blank form state used for both initial load and "Clear" action.
 const emptyForm: BookInput = {
   title: '',
   author: '',
@@ -29,6 +31,7 @@ export default function AdminBooks() {
   const [error, setError] = useState('')
   const [statusMessage, setStatusMessage] = useState('')
 
+  // Loads all books for the admin table.
   const loadBooks = async () => {
     setIsLoading(true)
     setError('')
@@ -53,9 +56,11 @@ export default function AdminBooks() {
   }
 
   useEffect(() => {
+    // Initial table load when the page opens.
     void loadBooks()
   }, [])
 
+  // Reset form fields and exit edit mode.
   const resetForm = () => {
     setForm(emptyForm)
     setEditingId(null)
@@ -68,6 +73,7 @@ export default function AdminBooks() {
     [isEditing, editingId],
   )
 
+  // Handles both create and update based on current edit mode.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -103,6 +109,7 @@ export default function AdminBooks() {
   }
 
   const handleDelete = async (bookId: number) => {
+    // Small confirmation guard to prevent accidental deletes.
     const confirmed = window.confirm('Delete this book?')
     if (!confirmed) {
       return
@@ -131,6 +138,7 @@ export default function AdminBooks() {
   }
 
   const startEdit = (book: Book) => {
+    // Prefill form with selected row so user can edit inline.
     setEditingId(book.bookID)
     setForm({
       title: book.title,

@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './index.css'
 import App from './App.tsx'
 
+// App entry point: mount React app and enable client-side routing.
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>

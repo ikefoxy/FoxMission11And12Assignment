@@ -1,5 +1,6 @@
 namespace backend.Models;
 
+// API response shape for paginated catalog requests.
 public sealed class PagedBooksResponse
 {
     public List<Book> Books { get; set; } = [];

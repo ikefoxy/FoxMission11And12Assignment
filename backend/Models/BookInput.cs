@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace backend.Models;
 
+// Request model used when creating or updating a book.
 public sealed class BookInput
 {
     [Required]

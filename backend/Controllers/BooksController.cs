@@ -6,9 +6,11 @@ namespace backend.Controllers;
 
 [ApiController]
 [Route("api")]
+// Thin API layer: receives HTTP requests and delegates database work to the repository.
 public sealed class BooksController(IBookRepository bookRepository) : ControllerBase
 {
     [HttpGet("categories")]
+    // Returns unique book categories for the catalog filter dropdown.
     public IActionResult GetCategories()
     {
         try
@@ -22,6 +24,7 @@ public sealed class BooksController(IBookRepository bookRepository) : Controller
     }
 
     [HttpGet("books")]
+    // Returns paged/sorted books and pagination metadata for the UI.
     public IActionResult GetBooks([FromQuery] int? pageSize, [FromQuery] int? pageNum, [FromQuery] string? sortOrder, [FromQuery] string? category)
     {
         try
@@ -35,6 +38,7 @@ public sealed class BooksController(IBookRepository bookRepository) : Controller
     }
 
     [HttpGet("books/{id:int}")]
+    // Looks up a single book by numeric ID.
     public IActionResult GetBookById(int id)
     {
         try
@@ -49,6 +53,7 @@ public sealed class BooksController(IBookRepository bookRepository) : Controller
     }
 
     [HttpPost("books")]
+    // Creates a new book and returns 201 with a location header.
     public IActionResult AddBook([FromBody] BookInput bookInput)
     {
         try
@@ -63,6 +68,7 @@ public sealed class BooksController(IBookRepository bookRepository) : Controller
     }
 
     [HttpPut("books/{id:int}")]
+    // Updates an existing book; returns 404 if that ID does not exist.
     public IActionResult UpdateBook(int id, [FromBody] BookInput bookInput)
     {
         try
@@ -83,6 +89,7 @@ public sealed class BooksController(IBookRepository bookRepository) : Controller
     }
 
     [HttpDelete("books/{id:int}")]
+    // Deletes a book by ID; returns 204 when successful.
     public IActionResult DeleteBook(int id)
     {
         try
